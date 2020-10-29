@@ -22,3 +22,9 @@ git push
 
 # Come Back up to the Project Root
 cd ..
+
+# push updates of the project to repository "blog"
+git add .
+git add --all #sometimes works in linux
+git commit -m "update blog config"
+git push
