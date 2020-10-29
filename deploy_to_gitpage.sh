@@ -9,6 +9,7 @@ hugo --cleanDestinationDir # if using a theme, replace with `hugo -t <YOURTHEME>
 cd public
 # Add changes to git.
 git add .
+git add --all
 
 # Commit changes.
 msg="rebuilding site `date`"
