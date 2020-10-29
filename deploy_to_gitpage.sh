@@ -3,7 +3,7 @@
 echo -e "\033[0;32mDeploying updates to GitHub...\033[0m"
 
 # Build the project.
-hugo # if using a theme, replace with `hugo -t <YOURTHEME>`
+hugo --cleanDestinationDir # if using a theme, replace with `hugo -t <YOURTHEME>`
 
 # Go To Public folder
 cd public
@@ -26,5 +26,5 @@ cd ..
 # push updates of the project to repository "blog"
 git add .
 git add --all #sometimes works in linux
-git commit -m "update blog config"
+git commit -m "update blog"
 git push
