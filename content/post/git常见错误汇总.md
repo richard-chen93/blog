@@ -52,4 +52,11 @@ git submodule add -b main git@github.com:richard-chen93/richard-chen93.github.io
 2、删除public文件夹。
 
 
+## 06 fatal: You are not currently on a branch. To push the history leading to the current (detached HEAD) state now, use      git push origin HEAD:<name-of-remote-branch>
+
+运行命令
+git checkout main
+即可解决
+
+
                 
