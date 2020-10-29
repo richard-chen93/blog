@@ -8,7 +8,6 @@ hugo --cleanDestinationDir # if using a theme, replace with `hugo -t <YOURTHEME>
 # Go To Public folder
 cd public
 # Add changes to git.
-git add .
 git add --all .
 
 # Commit changes.
@@ -16,7 +15,7 @@ msg="rebuilding site `date`"
 if [ $# -eq 1 ]
   then msg="$1"
 fi
-git commit -m "$msg"
+git commit -a -m "$msg"
 
 # Push source and build repos.
 git push
@@ -25,7 +24,6 @@ git push
 cd ..
 
 # push updates of the project to repository "blog"
-git add .
 git add --all .  #sometimes works in linux
-git commit -m "update blog"
+git commit -a -m "update blog"
 git push
