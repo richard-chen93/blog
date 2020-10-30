@@ -38,15 +38,6 @@ reset --hard 会在重置 HEAD 和branch的同时，重置stage区和工作目�
 
 例如你在上次 commit 之后又对文件做了一些改动：把修改后的ganmes.txt文件add到stage区，修改后的shopping list.txt保留在工作目录
 
-## 04 git无法执行deploy.sh  无法同步hugo的public文件夹到gitpage
-fatal: in unpopulated submodule
-
-删除.git\modules 所有内容  rm -rf
-git rm --cached public/ -f
-rm -rf public
-git submodule add -b main git@github.com:richard-chen93/richard-chen93.github.io.git public
-
-
 ## 05 git submodule add error: does not have a commit checked out
 1、新建的仓库，要至少提交一次更改（比如直接在github web页面随便添加一个任何文件，然后点提交。）
 2、删除public文件夹。
@@ -57,6 +48,24 @@ git submodule add -b main git@github.com:richard-chen93/richard-chen93.github.io
 运行命令
 git checkout main
 即可解决
+
+## 07
+如下报错：
+```
+Auto-merging search/index.json
+CONFLICT (content): Merge conflict in search/index.json
+Auto-merging post/index.html
+Auto-merging index.html
+Auto-merging archives/index.html
+Automatic merge failed; fix conflicts and then commit the result.
+```
+这样处理：
+```
+git add search/index.json
+git commit -s
+git push
+
+```
 
 
                 

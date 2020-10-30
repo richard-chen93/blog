@@ -40,21 +40,66 @@ git submodule update
 
 ## 启动实时预览（本地预览网站效果）
 写一篇文章生成一次会很繁琐，可以通过启动网站预览，实时监控页面的更改并刷新页面。
-
 hugo server -D
 参数： -D 输出包括标记为 draft: true 的草稿文章
 
 默认地址为 http://localhost:1313 如果 1313 端口被占用，会随机使用其他空端口。
 
 ## 若换了新电脑，要在新电脑上发布文章
-1、将blog克隆到本地  git clone git@github.com:richard-chen93/blog.git
-2、进入blog根目录，删除public文件夹 rm -rf public
-3、用以下命令设置子模块
-  612  git submodule init
-  615  git submodule update
-  616  git submodule status
-  617  git submodule sync
-4、好了以后执行deploy.sh，若有问题可尝试下面的指令修复问题：
-  628  git push origin HEAD:main
-  629  git checkout main
-  630  git push
+* 1、将blog克隆到本地  
+```
+git clone git@github.com:richard-chen93/blog.git
+```
+* 2、进入blog根目录，删除public文件夹 
+```
+rm -rf public
+```
+* 3、用以下命令设置子模块
+```
+ git submodule init
+ git submodule update
+ git submodule status
+ git submodule sync
+```
+此时执行deploy可能会报错：
+fatal: You are not currently on a branch.
+To push the history leading to the current (detached HEAD)
+state now, use
+
+    git push origin HEAD:<name-of-remote-branch>
+
+可尝试下面的指令修复问题：(在blog目录或public目录下都做)
+```
+  git checkout main
+  git push origin HEAD:main
+  git push -f
+```
+如果再有如下报错：
+```
+Auto-merging search/index.json
+CONFLICT (content): Merge conflict in search/index.json
+Auto-merging post/index.html
+Auto-merging index.html
+Auto-merging archives/index.html
+Automatic merge failed; fix conflicts and then commit the result.
+```
+这样处理：
+```
+git add search/index.json
+git commit -s
+git push
+
+```
+## 问题记录
+执行 hugo --cleanDestinationDir, 若blog仓库content/post下有删除的md文章，则public/post下对应的html文章也会同步删除。然后执行deploy.sh之后，git就会报错：
+```
+ # On branch main
+ # Untracked files:
+ #   (use "git add <file>..." to 
+ # include in what will be 
+ # committed)
+ #      ../content/post/1.md
+nothing added to commit but untracked files present (use "git add" to track)
+```
+所以目前不要动public目录下的任何东西，更新文章只在blog下进行，再deploy到gitpage即可。
+
