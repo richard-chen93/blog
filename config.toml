@@ -35,7 +35,7 @@ paginate = 10
   subTitle = "A personal blog."
 
   # Source URL of the website, will appear in the footer
-  sourceURL = "https://github.com/richard-chen93/hugo"
+  sourceURL = "https://github.com/richard-chen93/blog"
 
   # Use CloudFlare Workers to accelerate the Google Analytics
   # If you are using this please comment the googleAnalytics above
