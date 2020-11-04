@@ -83,12 +83,11 @@ paginate = 10
 
   # Disqus, see: https://disqus.com/admin/install/platforms/universalcode/
   # disqusShortname = "*********"
+  disqusShortname = "richard34"
   # Also use DisqusJS for accessing from Mainland China, see: https://github.com/SukkaW/DisqusJS
   # If you want to set multiple api key, see theme's README for more details
   # disqusJSApi = "https://*********/"
   # disqusJSApikey = "**********"
-  disqusJSApi = "https://disqus.com/api/oauth/2.0/authorize/"
-  disqusJSApikey = "kZRWeb2YQb6NpyAkijZ8M3fiBZ8xqkVLsYlzZPd9l0G1eIfxn2MMAyyiFmPpn4SH"
 
   # custom lazyload placeholder
   # 16:9
