@@ -59,7 +59,7 @@ Auto-merging index.html
 Auto-merging archives/index.html
 Automatic merge failed; fix conflicts and then commit the result.
 ```
-这样处理：
+处理方法：
 ```
 git add search/index.json
 git commit -s

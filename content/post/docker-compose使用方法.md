@@ -1,14 +1,10 @@
 ---
-title: "Docker Compose使用方法"
+title: "Docker Compose"
 date: 2020-10-29T18:40:08+08:00
 
 ---
 
-docker-compose使用方法
-
-docker-compose 找不到命令怎么办？
-
-解决docker-compose 命令不存在、未找到命令错误
+docker-compose
 
 1.安装扩展源
 
@@ -24,7 +20,7 @@ docker-compose version
 
 # 提示未找到命令
 
-4.通过以命令进行安装
+4.通过命令进行安装
 
 cd /usr/local/bin/
 
