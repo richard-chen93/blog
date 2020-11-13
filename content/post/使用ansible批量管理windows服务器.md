@@ -3,8 +3,6 @@ title: "使用ansible批量管理windows服务器"
 date: 2020-11-13T21:27:02+08:00
 ---
 
-# 使用ansible批量管理windows服务器
-
 ## 前提
 * windows被控端防火墙信任规则，允许5985端口通过。
 * 对于旧版本windows 服务器需要
