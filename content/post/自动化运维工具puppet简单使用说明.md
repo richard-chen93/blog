@@ -3,8 +3,6 @@ title: "自动化运维工具puppet简单使用说明"
 date: 2020-11-13T21:27:02+08:00
 ---
 
-# 自动化运维工具puppet简单使用说明 
-
 ## 目录
 ------------
 ## 一、此实验中puppet的运行环境
@@ -158,3 +156,38 @@ Node1执行完毕此命令后，查看Master的site.pp中定义的资源状态�
 [root@pnode1 ~]#
 ```
 存在说明puppet工作正常。
+
+
+## 附录 站点清单文件示例
+文件名 site.pp
+内容：
+```
+node pnode1{
+file {'test':
+	path=>'/root/test.txt',
+	owner=>'root',
+	group=>'root',
+	mode=>'644',
+	content=>'puppet system works!',
+}
+file {'test01':
+	path=>'/root/test01.txt',
+	owner=>'root',
+	group=>'root',
+	mode=>'644',
+	content=>'puppet system works!',
+}
+exec {'test shell scripts':
+	path=>'/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin',
+	command=>'sh /root/sh/test.sh',
+	user=>root,
+	group=>root,
+}
+exec {'test command':
+	path=>'/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin',
+	command=>'touch /root/exec.txt',
+	user=>root,
+	group=>root,
+}
+}
+```
