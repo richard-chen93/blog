@@ -38,6 +38,9 @@ git submodule sync
 git submodule init
 git submodule update
 
+## 添加tags
+博客根目录下的archetypes目录下，也有一个default.md文件。这是hugo新建md文件的默认模板
+
 ## 启动实时预览（本地预览网站效果）
 写一篇文章生成一次会很繁琐，可以通过启动网站预览，实时监控页面的更改并刷新页面。
 hugo server -D
@@ -102,4 +105,6 @@ git push
 nothing added to commit but untracked files present (use "git add" to track)
 ```
 所以目前不要动public目录下的任何东西，更新文章只在blog下进行，再deploy到gitpage即可。
+
+
 
