@@ -107,16 +107,15 @@ git push
 2.在页面添加统计代码，在/themes/layouts/partials/footer.html中添加如下代码
 ```
 <span id="busuanzi_container_site_pv">
-    本站访问量：<span id="busuanzi_value_site_pv"></span>次
+    本站总访问量<span id="busuanzi_value_site_pv"></span>次
 </span>
 &nbsp;
-<span id="busuanzi_container_site_uv">
-    您是本站第 <span id="busuanzi_value_site_uv"></span> 位访问者
-</span>
 ```
 3.在themes/layouts/_default/single.html中添加以下代码
 ```
-<h5 id="wc" style="font-size: 1rem;text-align: center;">{{ .FuzzyWordCount }} Words|Read in about {{ .ReadingTime }} Min|本文总阅读量<span id="busuanzi_value_page_pv"></span>次</h5>
+<h5 id="wc" style="font-size: 1rem;text-align: center;">{{ .FuzzyWordCount }} Words|Read in about {{ .ReadingTime }} Min|<span id="busuanzi_container_page_pv">
+  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+</span></h5>
 ```
 可根据个人喜好选择放在文章头部或尾部
 
