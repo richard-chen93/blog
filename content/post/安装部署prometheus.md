@@ -3,10 +3,9 @@ title: "安装部署prometheus"
 date: 2020-11-20T13:24:36+08:00
 tags: [ "technology" ]
 categories: [ "technology" ]
-draft: true
 ---
 
-# 环境准备
+## 环境准备
 * 3台机器centos7，1台prometheus服务器，主机名S0，1台grafana服务器S1，1台客户端S2
 * prometheus版本为prometheus-2.5.0.linux-amd64
 * 3台机器时间同步好
@@ -17,7 +16,7 @@ timedatectl set-timezone Asia/Shanghai
 date
 ```
 
-# 在S0上安装Prometheus并运行
+## 在S0上安装Prometheus并运行
 ```
 tar xf prometheus-2.5.0.linux-amd64.tar.gz
 mv prometheus-2.5.0.linux-amd64 /usr/local/prometheus
@@ -28,7 +27,7 @@ ss -tunpl | grep 9090
 若9090端口被Prometheus程序占用，说明启动成功，浏览器打开http://10.3.3.30:9090
 http://10.3.3.30:9090/metrics可看到所有监控到的数据
 
-# 在被监控主机S2上安装node-exporter组件并运行
+## 在被监控主机S2上安装node-exporter组件并运行
 ```
 tar xf node_exporter-0.16.0.linux-amd64.tar.gz
 mv node_exporter-0.16.0.linux-amd64 /usr/local/node_exporter
@@ -37,10 +36,10 @@ nohup ./node_exporter &
 ss -tunpl | grep 9090
 ```
 使用nohup后即使终端关闭，node_exporter程序也会继续运行
-浏览器打开http://10.3.3.30:9090
+浏览器打开http://10.3.3.30:9100
 http://10.3.3.32:9100/metrics可看到所有收集到的数据
 
-# 让Prometheus服务器拉取node节点信息
+## 让Prometheus服务器拉取node节点信息
 ```
 vim /usr/local/prometheus/prometheus.yml
   - job_name: 'node01'
@@ -49,11 +48,31 @@ vim /usr/local/prometheus/prometheus.yml
 ```
 在文件末尾添加节点信息
 
-# 重启Prometheus服务并查看节点信息
+## 重启Prometheus服务并查看节点信息
 ```
 pkill prometheus
 ./prometheus --config.file="/usr/local/prometheus/prometheus.yml" &
 ```
+## 添加mysql监控
+在s2上安装启动mariadb，为监控系统添加账户mysql_monitor,密码123,授予权限。
+安装使用mysqld_exporter组件,放到/usr/local/mysqld_exporter文件夹下面。
+```
+mysql
+grant select,replication client,process ON *.* to 'mysql_monitor'@'localhost' identified by '123';
+flush privileges;
+exit;
+```
+进入/usr/local/mysqld_exporter/, 修改mysql_exporter配置，添加mysql用户密码。然后启动mysql_exporter
+```
+vim ./.my.cnf
+[client]
+user=mysql_monitor
+password=123
+nohup ./mysqld_exporter --config.my-cnf=/usr/local/mysqld_exporter/.my.cnf &
+lsof -i:9104
+```
+修改Prometheus服务器配置文件，添加mysql监控项。在主配置文件最后再添加下面三行：
+
 
 
 
