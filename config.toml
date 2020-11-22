@@ -80,7 +80,7 @@ paginate = 10
   # utterances, see: https://utteranc.es/
   # utterancesRepo = "*/*"
   # utterancesIssueTerm = "pathname"
-  utterancesRepo = "*/*"
+  utterancesRepo = "richard-chen93/blog"
   utterancesIssueTerm = "pathname"
 
   # Disqus, see: https://disqus.com/admin/install/platforms/universalcode/
