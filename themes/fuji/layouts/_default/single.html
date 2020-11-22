@@ -6,7 +6,9 @@
     </h2>
     <div class="post-item post-meta">
         {{ partial "post-meta.html" . }}
+        <h6 id="wc" style="font-size: 1rem;text-align: center;">阅读约 {{ .ReadingTime }} 分钟</h6>
     </div>
+    
     {{ with .Params.player }}
     <div id="post-aplayer"></div>
     {{ end }}
