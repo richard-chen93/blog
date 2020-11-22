@@ -1,7 +1,8 @@
 ---
 title: "Hugo基本用法"
 date: 2020-10-28T10:29:18+08:00
-
+tags: [ "technology" ]
+categories: [ "technology" ]
 ---
 
 ## hugo本地创建、更新、删除文章后同步到gitpage的基本流程：

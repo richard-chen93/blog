@@ -1,6 +1,8 @@
 ---
 title: "Deploy Hugo Site_on Github Pages"
 date: 2020-10-27T18:16:10+08:00
+tags: [ "technology" ]
+categories: [ "technology" ]
 ---
 
 # 将hugo静态博客网页部署到github上

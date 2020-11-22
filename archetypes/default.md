@@ -1,8 +1,8 @@
 ---
 title: "{{ replace .Name "-" " " | title }}"
 description: "this is discr"
-tags: [ "text" ]
-categories: [ "tech" ]
+tags: [ "technology" ]
+categories: [ "technology" ]
 date: {{ .Date }}
 draft: false
 ---

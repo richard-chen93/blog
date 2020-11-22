@@ -1,6 +1,8 @@
 ---
 title: "Harbor搭建与使用"
 date: 2020-11-13T22:48:36+08:00
+tags: [ "technology" ]
+categories: [ "technology" ]
 ---
 
 ## 安装

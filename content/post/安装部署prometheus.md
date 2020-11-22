@@ -1,6 +1,8 @@
 ---
 title: "安装部署prometheus"
 date: 2020-11-20T13:24:36+08:00
+tags: [ "technology" ]
+categories: [ "technology" ]
 draft: true
 ---
 

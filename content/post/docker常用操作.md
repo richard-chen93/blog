@@ -1,6 +1,8 @@
 ---
 title: "Docker常用操作"
 date: 2020-11-13T23:07:07+08:00
+tags: [ "technology" ]
+categories: [ "technology" ]
 ---
 ## docker以host模式启动容器，并指定名称和共享盘
 docker container run -it --name mhost --privileged=true --net=host -p 8000:80 -v /mhost_volume:/data/ {docker image id}

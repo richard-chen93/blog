@@ -1,7 +1,8 @@
 ---
 title: "Git常见错误汇总"
 date: 2020-10-27T18:15:05+08:00
-
+tags: [ "technology" ]
+categories: [ "technology" ]
 ---
 
 ## 1 无法push

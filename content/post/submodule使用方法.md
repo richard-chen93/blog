@@ -1,6 +1,8 @@
 ---
 title: "git Submodule"
 date: 2020-10-29T17:48:08+08:00
+tags: [ "technology" ]
+categories: [ "technology" ]
 ---
 
 Git中submodule的使用

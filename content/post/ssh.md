@@ -1,7 +1,8 @@
 ---
 title: "ssh"
 date: 2020-10-29T18:43:21+08:00
-
+tags: [ "technology" ]
+categories: [ "technology" ]
 ---
 
 # linux更改 ssh 私钥 Passphrase

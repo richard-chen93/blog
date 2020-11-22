@@ -1,7 +1,8 @@
 ---
 title: "Docker Compose"
 date: 2020-10-29T18:40:08+08:00
-
+tags: [ "technology" ]
+categories: [ "technology" ]
 ---
 
 docker-compose

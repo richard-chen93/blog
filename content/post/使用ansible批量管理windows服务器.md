@@ -1,6 +1,8 @@
 ---
 title: "使用ansible批量管理windows服务器"
 date: 2020-11-13T21:27:02+08:00
+tags: [ "technology" ]
+categories: [ "technology" ]
 ---
 
 ## 前提

@@ -1,6 +1,8 @@
 ---
 title: "自动化运维工具puppet简单使用说明"
 date: 2020-11-13T21:27:02+08:00
+tags: [ "technology" ]
+categories: [ "technology" ]
 ---
 
 ## 目录
