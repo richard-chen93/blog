@@ -6,7 +6,9 @@ categories: [ "technology" ]
 ---
 
 ## vim tab改为4个空格
+```
 vim /etc/vim/vimrc
 set ts=4
 set expandtab
 set autoindent
+```
