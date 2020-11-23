@@ -72,10 +72,31 @@ nohup ./mysqld_exporter --config.my-cnf=/usr/local/mysqld_exporter/.my.cnf &
 lsof -i:9104
 ```
 修改Prometheus服务器配置文件，添加mysql监控项。在主配置文件最后再添加下面三行：
+```
+  - job_name: 'nodeS2_mariadb'
+    static_configs:
+    - targets: ['10.3.3.32:9104']
+```
 
+## 安装grafana服务器软件
+在s1上安装：
+```
+wget https://dl.grafana.com/oss/release/grafana-5.3.4-1.x86_64.rpm
+sudo rpm -i --nodeps grafana-5.3.4-1.x86_64.rpm
+systemctl enable grafana-server
+systemctl start grafana-server
+ss -tunpl | grep 3000
+```
+浏览器打开http://10.3.3.31:3000 admin/admin
+登录grafana后添加dashboard、编辑、选择数据源即可
 
-
-
+## 添加grafana图形监控模板：
+### 下载图形监控模板
+https://github.com/percona/grafana-dashboards
+下载后压缩包里面dashboards文件夹里面的所有jason文件就是图形监控模板文件。
+在grafana中导入特点的jason文件。
+### 设置数据库源
+grafana监控界面里，configuration-data source，之前添加的数据源名称必须改为：Prometheus。然后mysql的监控就可以正常展示
 
 
 
