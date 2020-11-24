@@ -98,6 +98,37 @@ https://github.com/percona/grafana-dashboards
 ### 设置数据库源
 grafana监控界面里，configuration-data source，之前添加的数据源名称必须改为：Prometheus。然后mysql的监控就可以正常展示
 
+## 配置alertmanager
+Alertmanager 部署
+普罗米修斯将数据采集和告警通知分成了两个模块。报警规则配置在普罗米修斯上（警报规则文件），然后发送报警信息到 AlertManger，AlertManager来管理这些报警信息，同时提供了聚合分组、告警抑制等高级功能，还支持通过 Email、WebHook 等多种方式发送告警消息提示。
+（1）解压【alertmanager-0.21.0.linux-amd64.zip】压缩文件到指定目录
+（2）进入目录，修改 alertmanager.yml 配置文件，该文件用于配置告警通知，这里提供的是163邮件的通知的样例
+•	你需要在这里配置上邮箱的 SMTP 服务器配置
+
+ 
+•	在这里配置上告警通知的接收人。mail-error 表示严重等级的告警通知（比如服务宕机），mail-warning 表示紧急等级的告警通知（比如内存使用快满了）
+
+ 
+（3）默认端口为 9093，可通过修改sh脚本修改端口
+ 
+（4）如果修改了端口，需要在普罗米修斯的配置文件（prometheus.yml）中对应修改端口，然后重启普罗米修斯，使得普罗米修斯和 Alertmanager 可以正常通信。普罗米修斯prometheus.yml对应的alertmanager设置项为：
+```
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['10.3.3.31:9093']
+
+rule_files:
+  # 告警规则配置文件位置
+  - "rules/*.yml"
+
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['172.20.32.218:9093']
+
+./promtool check config prometheus.yml
+```
 
 
 
