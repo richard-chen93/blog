@@ -1,9 +1,9 @@
 ---
-title: "About_kafka"
+title: "Kafka与zookeeper的安装配置"
 description: "this is discr"
 tags: [ "technology" ]
 categories: [ "technology" ]
-date: 2020-11-26T17:52:22+08:00
+date: 2020-11-26T18:47:39+08:00
 draft: false
 ---
 
