@@ -1,7 +1,10 @@
 ---
 title: "About_kafka"
-date: 2020-11-26T14:23:13+08:00
-draft: true
+description: "this is discr"
+tags: [ "technology" ]
+categories: [ "technology" ]
+date: 2020-11-26T17:52:22+08:00
+draft: false
 ---
 
 ## kafka下载
@@ -38,4 +41,3 @@ server.3=s6:2888:3888
 数字123对应myid文件的内容，指定了节点的编号。
 s4,s5,s6是主机名或IP；2888是follower与leader服务器通讯传递副本（replicator）的端口；3888是leader挂掉后集群重新选举时通信的端口。
 配置完毕启动zookeeper。查看状态，显示Mode为leader或follower即表示集群启动成功。
-
