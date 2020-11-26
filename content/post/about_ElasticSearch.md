@@ -41,7 +41,11 @@ kill `cat pid`
 
 
 # kibana 相关
-kinaba允许远程访问，这里改localhost为本机ip
-#server.host: "10.3.3.30"
+kinaba允许远程访问，配置文件中这里localhost为本机ip
+server.host: "10.3.3.30"
+
+启动kibana
+nohup ./kibana &
+
 
 
