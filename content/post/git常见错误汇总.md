@@ -46,7 +46,7 @@ reset --hard 会在重置 HEAD 和branch的同时，重置stage区和工作目�
 
 ## 06 fatal: You are not currently on a branch. To push the history leading to the current (detached HEAD) state now, use      git push origin HEAD:<name-of-remote-branch>
 
-运行命令
+运行命令(在blog目录 和public目录下都执行此操作)
 git checkout main
 即可解决
 
@@ -69,4 +69,4 @@ git push
 ```
 
 
-                
+​                
