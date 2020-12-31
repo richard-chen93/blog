@@ -82,3 +82,4 @@ source /etc/profile
 
 ## 5、as
 
+test

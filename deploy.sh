@@ -23,3 +23,10 @@ git push
 
 # Come Back up to the Project Root
 cd ..
+
+
+
+# push Project root directory: blog
+git add --all .
+git commit -m "update"
+git push
