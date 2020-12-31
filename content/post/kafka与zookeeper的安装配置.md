@@ -7,16 +7,22 @@ date: 2020-11-26T18:47:39+08:00
 draft: false
 ---
 
-## 1、kafka下载
+## 1、kafka架构图及下载
 https://archive.apache.org/dist/kafka/0.11.0.0/kafka_2.11-0.11.0.0.tgz
+
+![](https://i.bmp.ovh/imgs/2020/12/799f1bc647c4608b.png)
+
+此外，java安装并配置好环境变量。
 
 ## 2、修改kafka配置文件
 ```
 vim ./config/server.properties
 broker.id=0 #每个broker的唯一标识，不可重复
 delete.topic.enable=true #允许删除topic
-log.dirs=/root/kafka/logs #出于安全考虑，修改默认log位置。kafka的数据都存储在logs文件夹下面。
+log.dirs=/root/kafka/logs #出于安全考虑，修改默认log位置。kafka的消息队列数据和日志都存储在logs文件夹下面。
 （logs文件夹在kafka根目录下创建）
+
+#在zookeeper的数据机构中，每个子目录项如 NameService 都被称作为 znode(目录节点)，和文件系统一样，我们能够自由的增加、删除#znode，在一个znode下增加、删除子znode，唯一的不同在于znode是可以存储数据的
 zookeeper.connect=s4:2181,s5:2181,s6:2181  #指定zookeeper集群
 ```
 
@@ -51,5 +57,28 @@ s4,s5,s6是主机名或IP；2888是follower与leader服务器通讯传递副本�
 
 配置完毕启动zookeeper。查看状态，显示Mode为leader或follower即表示集群启动成功。
 
-设置开机启动
+设置开机启动，使用admin用户启动zookeeper：
+
+```
+$ sudo su #切换到root用户
+$ vim /etc/rc.d/rc.local
+新增配置
+su admin -c "/usr/local/zookeeper/startBase.sh"  #组件脚本全路径
+
+```
+
+startBase.sh脚本内容：
+
+```
+#!/bin/bash
+# chkconfig:   2345 60 20
+# description:  zookeeper start
+APP_HOME=/usr/local/zookeeper/bin
+cd $APP_HOME
+echo $PWD
+source /etc/profile
+./zkServer.sh start ../conf/zoo.cfg
+```
+
+## 5、as
 
