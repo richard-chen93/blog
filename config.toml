@@ -32,7 +32,7 @@ paginate = 10
 
 [params]
   author = "Richard.chen" # You can also set author in post front matter individually
-  subTitle = "A personal blog."
+  subTitle = "A fullstack devops engineer."
 
   # Source URL of the website, will appear in the footer
   sourceURL = "https://github.com/richard-chen93/blog"
