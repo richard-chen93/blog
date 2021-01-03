@@ -26,7 +26,11 @@ log.dirs=/root/kafka/logs #出于安全考虑，修改默认log位置。kafka的
 zookeeper.connect=s4:2181,s5:2181,s6:2181  #指定zookeeper集群
 ```
 
-## 3、xync 分发同步 kafka目录 （会经常用到同步工具xsync）
+## 3、kafka和ZK集群配置文件同步
+
+xync 分发同步 kafka和zk目录 （会经常用到同步工具xsync）
+
+或使用mobaxterm的multi-exec功能同时修改多台机器的配置。
 
 ## 4、zookeeper的分布式安装配置
 #### 4.1安装
@@ -80,6 +84,20 @@ source /etc/profile
 ./zkServer.sh start ../conf/zoo.cfg
 ```
 
-## 5、as
+## 5、启动kafka服务并测试
 
-test
+```
+  110  cd kafka/bin/
+  106  sh bin/kafka-server-start.sh config/server.properties
+  113  ./kafka-topics.sh --create --zookeeper s102:2181 --partitions 2 --replication-factor 2 --topic topic01
+  117  ./kafka-topics.sh --list --zookeeper s102:2181
+  118  ./kafka-topics.sh --list --zookeeper s103:2181
+  119  ./kafka-topics.sh --list --zookeeper s104:2181
+# 启动 kafka，指定配置文件
+# 创建topic，指定zk服务器，分区数、副本数、topic名字
+```
+
+
+
+# 6、 生成，消费数据
+
