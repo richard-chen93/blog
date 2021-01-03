@@ -99,5 +99,51 @@ source /etc/profile
 
 
 
-# 6、 生成，消费数据
+## 6、 生成、消费数据
+
+### s102生产数据：
+
+```
+bin/kafka-console-producer.sh --broker-list s102:9092 --topic topic01
+```
+
+
+>hi there
+>i am richard
+
+
+
+### s103或者s102 消费数据：
+
+```
+bin/kafka-console-consumer.sh --zookeeper s102:2181 --topic topic01 #消费最新数据
+```
+
+```
+bin/kafka-console-consumer.sh --zookeeper s102:2181 --topic topic01 --from beginning  #消费所有数据，从头开始
+```
+
+```
+bin/kafka-console-consumer.sh --bootstrap-server s102:9092 --topic topic01 --from-beginning
+#offset数据不经过zk，而是通过kafka集群bootstrap-server
+#offset数据保存在kafka集群的topic里
+```
+
+### 查看topic信息
+
+```
+bin/kafka-topics.sh --zookeeper s102:2181 --describe topic topic01
+```
+
+```
+Topic:topic01   PartitionCount:2        ReplicationFactor:2     Configs:
+        Topic: topic01  Partition: 0    Leader: 1       Replicas: 1,0   Isr: 1
+        Topic: topic01  Partition: 1    Leader: 1       Replicas: 2,1   Isr: 1
+```
+
+### 删除topic
+
+```
+bin/kafka-topics.sh --zookeeper s102:2181 --delete --topic topic01
+```
 
