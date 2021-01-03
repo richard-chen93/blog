@@ -9,6 +9,8 @@ draft: false
 
 ###  安装NPT（所有节点）
 
+配置了ntp启动正常，设置开机自启，发现重启后启动不起来，且无任何报错？ 坑爹！disable 和stop chronyd !
+
 我们建议在所有 Ceph 节点上安装 NTP 服务，以免因时钟漂移导致故障。
 
 ```bash
