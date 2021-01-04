@@ -45,8 +45,8 @@ $ vim /etc/ntp.conf
 ```
 
 ```js
-restrict 192.168.6.150 mask 255.255.255.0 nomodify notrap #IP为node1的ip地址
-server  192.168.6.150     # #IP为node1的ip地址
+restrict 10.0.3.3 mask 255.255.255.0 nomodify notrap #IP为node1的ip地址
+server  10.0.3.3     # #IP为node1的ip地址
 ```
 
 ```bash
