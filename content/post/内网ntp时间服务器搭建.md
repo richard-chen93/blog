@@ -14,7 +14,7 @@ draft: false
 我们建议在所有 Ceph 节点上安装 NTP 服务，以免因时钟漂移导致故障。
 
 ```bash
-$ sudo yum install ntp ntpdate ntp-doc
+sudo yum install ntp ntpdate
 ```
 
 #### 1.node1节点配置
@@ -22,35 +22,37 @@ $ sudo yum install ntp ntpdate ntp-doc
  node1节点作为ntp服务器
 
 ```bash
-$ sudo su #切换到root用户
-$ vim /etc/ntp.conf
+sudo vim /etc/ntp.conf	#删除所有默认的restrict 和 server配置，添加以下内容：
 ```
 
 ```js
-restrict 192.168.6.0 mask 255.255.255.0 nomodify notrap  #配置集群的IP段
+restrict 10.0.3.3 mask 255.255.255.0 nomodify notrap  #配置集群的IP段
 
 server  127.127.1.0     # local clock
 fudge   127.127.1.0 stratum 10
 ```
 
 ```bash
-service ntpd restart  #重启ntpd时间服务器
+sudo systemctl enable ntpd
+sudo systemctl restart ntpd
+systemctl status ntpd
 ```
 
 #### 2.其他节点配置
 
 ```bash
-$ sudo su #切换到root用户
-$ vim /etc/ntp.conf
+sudo vim /etc/ntp.conf
 ```
 
 ```js
-restrict 10.0.3.3 mask 255.255.255.0 nomodify notrap #IP为node1的ip地址
-server  10.0.3.3     # #IP为node1的ip地址
+restrict 10.0.3.4 mask 255.255.255.0 nomodify notrap #IP为node1的ip地址
+server  10.0.3.4     # #IP为node1的ip地址
 ```
 
 ```bash
-service ntpd restart  #重启ntpd时间服务器
+sudo systemctl enable ntpd
+sudo systemctl restart ntpd
+systemctl status ntpd
 ```
 
 #### 3.查看时间同步状态

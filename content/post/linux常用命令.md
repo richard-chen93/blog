@@ -27,3 +27,27 @@ cpu cores    : 6
 [root@AAA ~]# cat /proc/cpuinfo| grep "processor"| wc -l
 24
 ```
+
+# 文本编辑
+
+```
+cat >> /etc/my.cnf << EOF
+text 1
+text 2
+EOF
+```
+
+```
+sed -i 's/原字符串/新字符串/' /home/1.txt
+```
+
+ sudo useradd cephuser ; echo cephuser | sudo passwd --stdin cephuser
+
+我的macbook15，windows下的虚拟机：
+
+```
+sed -i 's/920f1da23253/920f1da23011/' /etc/sysconfig/network-scripts/ifcfg-ens33
+sed -i 's/IPADDR=10.0.3.253/IPADDR=10.0.3.11/' /etc/sysconfig/network-scripts/ifcfg-ens33
+systemctl restart network
+```
+
