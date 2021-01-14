@@ -1,9 +1,9 @@
 ---
-title: "Ceph 12.2"
+title: "Ceph_12_luminous安装"
 description: "this is discr"
 tags: [ "technology" ]
 categories: [ "technology" ]
-date: 2021-01-14T11:18:09+08:00
+date: 2021-01-14T12:01:44+08:00
 draft: false
 ---
 
