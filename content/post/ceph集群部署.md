@@ -23,6 +23,10 @@ s7 s8 s9为3个node，拥有空闲磁盘sdb，10G
 
 
 
+ceph-deploy --version  1.5.39
+
+ceph version 10.2.11
+
 ## 1、时间同步
 
 s7作为ntp服务器，s8-10作为客户端
@@ -216,11 +220,7 @@ Note： 在管理节点上，进入刚创建的放置配置文件的目录，用
 ceph-deploy new s7
 ```
 
-例如：
 
-```
-ceph-deploy new node1
-```
 
 在当前目录下用 `ls` 和 `cat` 检查 `ceph-deploy` 的输出，应该有一个 Ceph 配置文件、一个 monitor 密钥环和一个日志文件。详情见 [ceph-deploy new -h](http://docs.ceph.org.cn/rados/deployment/ceph-deploy-new) 。
 
@@ -239,7 +239,7 @@ public network = {ip-address}/{netmask}
 4、安装 Ceph 。
 
 ```
-ceph-deploy install s3 s4 s5 s6
+ceph-deploy install s7 s8 s9 s10
 ```
 
 `ceph-deploy` 将在各节点安装 Ceph 。 **注：**如果你执行过 `ceph-deploy purge` ，你必须重新执行这一步来安装 Ceph 。
@@ -265,6 +265,8 @@ ceph-deploy mon create-initial
 
 你可以用 `create` 命令一次完成准备 OSD 、部署到 OSD 节点、并激活它。 `create` 命令是依次执行 `prepare` 和 `activate` 命令的捷径。
 
+如果创建osd失败，怎么弄都是失败，那就将各node sdb都分区为sdb1,xfs格式，并且创建osd时使用s7:/dev/sdb1， 而不是/dev/sdb。  因为没有时间和精力为了一个别人的BUG而执着于此，切记！
+
 ```
 ceph-deploy osd create s7:/dev/sdb s8:/dev/sdb  #在两个节点创建osd
 ceph-deploy osd create osdserver1:sdb:/dev/ssd1 #数据放sdb，日志放ssd盘
@@ -273,10 +275,10 @@ ceph-deploy osd create osdserver1:sdb:/dev/ssd1 #数据放sdb，日志放ssd盘
 ## 把配置文件和 admin 密钥拷贝到管理节点和 Ceph 节点
 
 ```
- ceph-deploy s7 s8 s9 s10
+ ceph-deploy admin s7 s8 s9 s10
 ```
 
-
+ceph mds stat 查看MDS
 
 ## 确保ceph.client.admin.keyring的权限正确
 
@@ -310,16 +312,10 @@ cluster 3756d8ae-6f85-40f0-abd3-2a2863ec37dc
 
 ```
 
-## 安装 radosgw
-
-```bash
- ceph-deploy rgw create node1
-```
-
 查看是否安装成功
 
 ```bash
- curl http://node1:7480
+ curl http://s7:7480
 
 <ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
 <Owner>
@@ -329,6 +325,92 @@ cluster 3756d8ae-6f85-40f0-abd3-2a2863ec37dc
 <Buckets/>
 </ListAllMyBucketsResult>
 ```
+
+
+
+# 4、ceph文件系统
+
+Ceph 文件系统要求 Ceph 存储集群内至少有一个 [*Ceph 元数据服务器*](http://docs.ceph.org.cn/glossary/#term-63)。
+
+## 1、增加一元数据服务器
+
+部署完监视器和 OSD 后，还可以部署元数据服务器。
+
+```
+ceph-deploy mds create s7:{daemon-name}] [{host-name}[:{daemon-name}] ...]
+```
+
+如果你想在同一主机上运行多个守护进程，可以为每个进程指定名字（可选）。
+
+## 2、拆除一元数据服务器
+
+尚未实现……？
+
+## 3、创建文件系统
+
+一个 Ceph 文件系统需要至少两个 RADOS 存储池，一个用于数据、一个用于元数据。配置这些存储池时需考虑：
+
+- 为元数据存储池设置较高的副本水平，因为此存储池丢失任何数据都会导致整个文件系统失效。
+- 为元数据存储池分配低延时存储器（像 SSD ），因为它会直接影响到客户端的操作延时。
+
+关于存储池的管理请参考 [*存储池*](http://docs.ceph.org.cn/rados/operations/pools/) 。例如，要用默认设置为文件系统创建两个存储池，你可以用下列命令：
+
+```
+$ ceph osd pool create cephfs_data <pg_num>
+$ ceph osd pool create cephfs_metadata <pg_num>
+```
+
+创建好存储池后，你就可以用 `fs new` 命令创建文件系统了：
+
+```
+$ ceph fs new <fs_name> <metadata> <data>
+```
+
+例如：
+
+```
+$ ceph fs new cephfs cephfs_metadata cephfs_data
+$ ceph fs ls
+name: cephfs, metadata pool: cephfs_metadata, data pools: [cephfs_data ]
+```
+
+文件系统创建完毕后， MDS 服务器就能达到 *active* 状态了，比如在一个单 MDS 系统中：
+
+```
+$ ceph mds stat
+e5: 1/1/1 up {0=a=up:active}
+```
+
+建好文件系统且 MDS 活跃后，你就可以挂载此文件系统了：
+
+要挂载 Ceph 文件系统，如果你知道监视器 IP 地址可以用 `mount` 命令、或者用 `mount.ceph` 工具来自动解析监视器 IP 地址。例如：
+
+```
+sudo mkdir /mnt/mycephfs
+sudo mount -t ceph 192.168.0.1:6789:/ /mnt/mycephfs
+```
+
+要挂载启用了 `cephx` 认证的 Ceph 文件系统，你必须指定用户名、密钥。
+
+```
+sudo mount -t ceph 192.168.0.1:6789:/ /mnt/mycephfs -o name=admin,secret=AQATSKdNGBnwLhAAnNDKnH65FmVKpXZJVasUeQ==
+```
+
+前述用法会把密码遗留在 Bash 历史里，更安全的方法是从文件读密码。例如：
+
+```
+sudo mount -t ceph 192.168.0.1:6789:/ /mnt/mycephfs -o name=admin,secretfile=/etc/ceph/admin.secret
+```
+
+关于 cephx 参见[认证](http://docs.ceph.org.cn/rados/operations/authentication/)。
+
+要卸载 Ceph 文件系统，可以用 `unmount` 命令，例如：
+
+```
+sudo umount /mnt/mycephfs
+```
+
+
 
 
 
