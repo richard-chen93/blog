@@ -1,19 +1,99 @@
 ---
-title: "各种阿里云加速器"
-date: 2020-10-30T09:00:58+08:00
+title: "Centos7初始安装配置"
+description: "this is discr"
 tags: [ "technology" ]
 categories: [ "technology" ]
-
+date: 2021-01-15T17:44:19+08:00
+draft: false
 ---
 
-# yum
-若最小化安装，可安装一些常用工具：
+
+
+# 前言
+
+最小化安装系统后：关闭防火墙和selinux、安装常用工具、设置yum源、创建普通用户admin、cephuser，设置ntp
+
+# 1、一键搞定脚本
 
 ```
-yum -y install wget curl vim net-tools python-pip
+#!/bin/bash
+
+
+
+####disable and stop selinux & firewalld
+
+sed  -i 's/#UseDNS yes/UseDNS no/g'  /etc/ssh/sshd_config
+sed  -i 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/g'  /etc/ssh/sshd_config
+sed  -i 's/SELINUX=enforcing/SELINUX=disabled/g'  /etc/ssh/sshd_config
+setenforce 0
+systemctl diable firewalld
+systemctl stop firewalld
+
+
+
+######set aliyun mirror
+
+yum -y install wget
+wget -O /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
+
+sed -i -e '/mirrors.cloud.aliyuncs.com/d' -e '/mirrors.aliyuncs.com/d' /etc/yum.repos.d/CentOS-Base.repo
+
+yum makecache
+
+
+
+######install common soft
+
+yum -y install epel-release git ntp ntpdate curl vim net-tools python36 python-pip
+
+
+
+######## add common users
+echo "admin ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/admin
+
+sudo useradd cephuser ; echo cephuser | sudo passwd --stdin cephuser
+echo "cephuser ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/cephuser
+sudo chmod 0440 /etc/sudoers.d/cephuser
+
+
+
+####### make ceph yum repo
+cat > /etc/yum.repos.d/ceph.repo <<EOF
+[ceph-luminous-noarch]
+name = ceph-luminous-noarch
+baseurl = https://mirrors.tuna.tsinghua.edu.cn/ceph/rpm-luminous/el7/noarch/
+enabled = 1
+gpgcheck = 0
+gkgkey = http://mirrors.tuna.tsinghua.edu.cn/ceph/keys/release.asc
+[ceph-luminous-x64]
+name = ceph-luminous-x64
+baseurl = https://mirrors.tuna.tsinghua.edu.cn/ceph/rpm-luminous/el7/x86_64/
+enabled = 1
+gpgcheck = 0
+gkgkey = http://mirrors.tuna.tsinghua.edu.cn/ceph/keys/release.asc
+EOF
+sudo yum makecache
+
+
+
+####### install ceph needed pakages
+wget https://files.pythonhosted.org/packages/5f/ad/1fde06877a8d7d5c9b60eff7de2d452f639916ae1d48f0b8f97bf97e570a/distribute-0.7.3.zip
+sudo yum -y install unzip
+unzip distribute-0.7.3.zip
+cd distribute-0.7.3
+sudo python setup.py install
+sudo yum -y install deltarpm
 ```
 
-常用的初始配置，加快dns，关闭selinux和防火墙
+
+
+
+
+
+
+# 2、非脚本
+
+## 常用的初始配置，加快dns，关闭selinux和防火墙
 
 ```
 sed  -i 's/#UseDNS yes/UseDNS no/g'  /etc/ssh/sshd_config
@@ -31,17 +111,27 @@ systemctl stop firewalld
 centos7:
 
 ```
+yum -y install wget
 wget -O /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
 
 sed -i -e '/mirrors.cloud.aliyuncs.com/d' -e '/mirrors.aliyuncs.com/d' /etc/yum.repos.d/CentOS-Base.repo
 
 yum makecache
-
-yum -y install epel-release
 ```
 
 
-# pip:
+
+## 安装常用组件
+
+```
+yum -y update 
+yum -y install epel-release git ntp ntpdate curl vim net-tools python36 python-pip
+```
+
+
+
+## pip:
+
 ```
 pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
@@ -52,14 +142,17 @@ pip install django-bootstrap3==6.2.2 -i http://mirrors.aliyun.com/pypi/simple --
 ## Mac:
 
 修改 pip.conf 文件
+
 ```
 vim $HOME/Library/Application Support/pip/pip.conf
 ```
+
 如果没有上面的目录,在如下目录创建 pip.conf
 
 $HOME/.config/pip/pip.conf
 
 修改内容如下：
+
 ```
 [global]
 
@@ -73,6 +166,7 @@ index-url = https://pypi.tuna.tsinghua.edu.cn/simple12
 %APPDATA%\pip\pip.ini
 
 修改内容如下：
+
 ```
 [global]
 
@@ -82,9 +176,11 @@ index-url = https://pypi.tuna.tsinghua.edu.cn/simple
 
 
 
-# docker：
+## docker：
+
 Ubuntu 16.04+、Debian 8+、CentOS 7+
 创建或修改 /etc/docker/daemon.json：
+
 ```
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json <<-'EOF'
@@ -161,8 +257,10 @@ Docker Hub
 
 检查加速器是否生效
 命令行执行 docker info，如果从结果中看到了如下内容，说明配置成功。
+
 ```
 Registry Mirrors:
  [...]
  https://registry.docker-cn.com/
 ```
+
