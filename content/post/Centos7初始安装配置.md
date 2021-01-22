@@ -38,13 +38,20 @@ wget -O /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos
 
 sed -i -e '/mirrors.cloud.aliyuncs.com/d' -e '/mirrors.aliyuncs.com/d' /etc/yum.repos.d/CentOS-Base.repo
 
+wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+
 yum makecache
 
 
 
 ######install common soft
 
-yum -y install epel-release git ntp ntpdate curl vim net-tools python36 python-pip
+yum -y install epel-release git ntp ntpdate curl vim net-tools python36 python-pip lrzsz
+yum -y groupinstall "Fonts"
+
+###### add chinese language
+echo 'export LC_ALL="zh_CN.UTF-8"' >> /etc/profile
+source /etc/profile
 
 
 

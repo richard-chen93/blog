@@ -26,7 +26,7 @@ sudo vim /etc/ntp.conf	#删除所有默认的restrict 和 server配置，添加�
 ```
 
 ```js
-restrict 10.0.3.3 mask 255.255.255.0 nomodify notrap  #配置集群的IP段
+restrict 10.3.3.4 mask 255.255.255.0 nomodify notrap  #配置集群的IP段
 
 server  127.127.1.0     # local clock
 fudge   127.127.1.0 stratum 10
@@ -45,8 +45,8 @@ sudo vim /etc/ntp.conf
 ```
 
 ```js
-restrict 10.0.3.4 mask 255.255.255.0 nomodify notrap #IP为node1的ip地址
-server  10.0.3.4     # #IP为node1的ip地址
+restrict 10.3.3.4 mask 255.255.255.0 nomodify notrap #IP为node1的ip地址
+server  10.3.3.4     # #IP为node1的ip地址
 ```
 
 ```bash

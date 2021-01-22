@@ -72,7 +72,11 @@ virt-install: 虚拟机命令行安装工具
 ## 1、创建虚拟机（命令行）
 
 ```
-virt-install --name=vm1 --vcpus=1 --memory=512 --location=/tmp/CentOS-7-x86_64-Minimal-2009.iso --disk path=/home/images.qcow2,size=10,format=qcow2 --network bridge=virbr0 --graphics none --extra-args='console=ttyS0' --force
+qemu-img create -f qcow2 /kvm_images/vm1.qcow2 10G
+```
+
+```
+virt-install --name=vm1 --vcpus=1 --memory=512 --location=/tmp/CentOS-7-x86_64-Minimal-2009.iso --disk path=/kvm_images/vm1.qcow2,size=10,format=qcow2 --network bridge=virbr0 --graphics none --extra-args='console=ttyS0' --force
 ```
 
 ## 2、扩容磁盘
