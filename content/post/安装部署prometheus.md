@@ -5,7 +5,10 @@ tags: [ "technology" ]
 categories: [ "technology" ]
 ---
 
+1sssssss
+
 ## 环境准备
+
 * 3台机器centos7，1台prometheus服务器，主机名S0，1台grafana服务器S1，1台客户端S2
 * prometheus版本为prometheus-2.5.0.linux-amd64
 * 3台机器时间同步好
@@ -105,12 +108,12 @@ Alertmanager 部署
 （2）进入目录，修改 alertmanager.yml 配置文件，该文件用于配置告警通知，这里提供的是163邮件的通知的样例
 •	你需要在这里配置上邮箱的 SMTP 服务器配置
 
- 
+
 •	在这里配置上告警通知的接收人。mail-error 表示严重等级的告警通知（比如服务宕机），mail-warning 表示紧急等级的告警通知（比如内存使用快满了）
 
- 
+
 （3）默认端口为 9093，可通过修改sh脚本修改端口
- 
+
 （4）如果修改了端口，需要在普罗米修斯的配置文件（prometheus.yml）中对应修改端口，然后重启普罗米修斯，使得普罗米修斯和 Alertmanager 可以正常通信。普罗米修斯prometheus.yml对应的alertmanager设置项为：
 ```
 # Alertmanager configuration
