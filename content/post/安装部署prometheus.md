@@ -5,8 +5,6 @@ tags: [ "technology" ]
 categories: [ "technology" ]
 ---
 
-1sssssss
-
 ## 环境准备
 
 * 3台机器centos7，1台prometheus服务器，主机名S0，1台grafana服务器S1，1台客户端S2

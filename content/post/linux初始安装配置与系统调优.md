@@ -1,26 +1,35 @@
 ---
-title: "Centos7初始安装配置"
+title: "Linux初始安装配置与系统调优"
 description: "this is discr"
 tags: [ "technology" ]
 categories: [ "technology" ]
-date: 2021-01-15T17:44:19+08:00
+date: 2021-01-24T16:43:05+08:00
 draft: false
 ---
 
-
-
 # 前言
 
-最小化安装系统后：关闭防火墙和selinux、安装常用工具、设置yum源、创建普通用户admin、cephuser，设置ntp
+centos7系统，最小化安装系统后：关闭防火墙和selinux、安装常用工具、设置yum源、创建普通用户admin、cephuser，设置ntp、系统和进程级别的文件句柄
 
 # 1、一键搞定脚本
 
 ```
 #!/bin/bash
 
+##########optimize system
+cat >> /etc/security/limits.conf << EOF
+* soft noproc  65535
+* hard noproc  65535
+* soft nofile  1000000
+* hard nofile  1000000
+EOF
+echo "fs.file-max = 2000000" >> /etc/sysctl.conf
+sysctl -p
+echo "ulimit -u 60000" >> /etc/profile
+source /etc/profile
+cd
 
-
-####disable and stop selinux & firewalld
+#############disable and stop selinux & firewalld
 
 sed  -i 's/#UseDNS yes/UseDNS no/g'  /etc/ssh/sshd_config
 sed  -i 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/g'  /etc/ssh/sshd_config
@@ -31,7 +40,7 @@ systemctl stop firewalld
 
 
 
-######set aliyun mirror
+###########set aliyun mirror
 
 yum -y install wget
 wget -O /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
@@ -44,18 +53,18 @@ yum makecache
 
 
 
-######install common soft
+############install common soft
 
 yum -y install epel-release git ntp ntpdate curl vim net-tools python36 python-pip lrzsz
 yum -y groupinstall "Fonts"
 
-###### add chinese language
+############### add chinese language
 echo 'export LC_ALL="zh_CN.UTF-8"' >> /etc/profile
 source /etc/profile
 
 
 
-######## add common users
+############### add common users
 echo "admin ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/admin
 
 sudo useradd cephuser ; echo cephuser | sudo passwd --stdin cephuser
@@ -63,8 +72,7 @@ echo "cephuser ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/cephuser
 sudo chmod 0440 /etc/sudoers.d/cephuser
 
 
-
-####### make ceph yum repo
+################# make ceph yum repo
 cat > /etc/yum.repos.d/ceph.repo <<EOF
 [ceph-luminous-noarch]
 name = ceph-luminous-noarch
@@ -82,23 +90,58 @@ EOF
 sudo yum makecache
 
 
-
-####### install ceph needed pakages
+################# install ceph needed pakages
 wget https://files.pythonhosted.org/packages/5f/ad/1fde06877a8d7d5c9b60eff7de2d452f639916ae1d48f0b8f97bf97e570a/distribute-0.7.3.zip
 sudo yum -y install unzip
 unzip distribute-0.7.3.zip
 cd distribute-0.7.3
 sudo python setup.py install
 sudo yum -y install deltarpm
+
 ```
 
 
 
-
+### 
 
 
 
 # 2、非脚本
+
+## 设置最大进程数和句柄
+
+添加用户级别句柄和进程 root执行
+
+* ```
+  cat >> /etc/security/limits.conf << EOF
+  * soft noproc  65535
+  * hard noproc  65535
+  * soft nofile  1000000
+  * hard nofile  1000000
+  EOF
+  sysctl -w  fs.file-max =65536
+  echo "ulimit -u 10000" >> /etc/profile
+  source /etc/profile
+  cd
+  ```
+
+  
+
+说明：\* 代表针对所有用户
+
+noproc 是代表最大进程数
+
+nofile 是代表最大文件打开数
+
+系统级别句柄
+
+
+
+设置各linux 用户的最大进程数，下面把某linux用户的最大进程数设为10000个：
+
+
+
+### 
 
 ## 常用的初始配置，加快dns，关闭selinux和防火墙
 
@@ -269,5 +312,65 @@ Docker Hub
 Registry Mirrors:
  [...]
  https://registry.docker-cn.com/
+```
+
+# 3、系统调优
+
+limits.conf 和sysctl.conf区别在于limits.conf是针对用户，而sysctl.conf是针对整个系统参数配置。
+
+limits.conf文件实际是Linux PAM（插入式认证模块，Pluggable Authentication Modules中pam_limits.so的配置文件），突破系统的默认限制，对系统访问资源有一定保护作用，当用户访问服务器时，服务程序将请求发送到PAM模块，PAM模块根据服务名称在/etc/pam.d目录下选择一个对应的服务文件，然后根据服务文件的内容选择具体的PAM模块进行处理。 
+
+## limits.conf
+
+说明：\* 代表针对所有用户
+
+noproc 是代表最大进程数
+
+nofile 是代表最大文件打开数
+
+```
+*  soft noproc  65535
+*  hard noproc  65535
+*  soft nofile  1000000
+*  hard nofile  1000000
+```
+
+
+
+## /etc/sysctl.conf
+
+**查看系统级别最大文件句柄数**
+
+```
+cat /proc/sys/fs/file-max
+```
+
+------
+
+**修改最大文件句柄数：永久生效**
+
+**1、修改配置文件加入内核参数/etc/sysctl.conf**
+
+```
+echo "fs.file-max = 2000000" >> /etc/sysctl.conf
+```
+
+50W并发可设置 = 999999
+
+注：修改范围为系统所有进程可打开的最大文件句柄
+
+**2、使修改配置立即生效：**
+
+```
+sysctl -p
+```
+
+## 用户最大进程数
+
+设置各linux 用户的最大进程数，下面把某linux用户的最大进程数设为10000个：
+
+```
+echo "ulimit -u 60000" >> /etc/profile
+source /etc/profile
 ```
 

@@ -7,6 +7,46 @@ date: 2021-01-14T12:01:44+08:00
 draft: false
 ---
 
+## 0、利索的脚本：
+
+前提：
+
+3台机器上都配置好ceph源，并yum makecache。在ceph-deploy上安装ceph-deploy并执行下列脚本：
+
+```
+#!/bin/bash
+cd
+cd
+mkdir my-cluster
+cd my-cluster
+
+ceph-deploy new s4 s5 s6
+
+export CEPH_DEPLOY_REPO_URL=http://mirrors.tuna.tsinghua.edu.cn/ceph/rpm-luminous/el7
+export CEPH_DEPLOY_GPG_URL=http://mirrors.tuna.tsinghua.edu.cn/ceph/keys/release.asc
+
+cat >> ./ceph.conf << EOF
+public_network = 10.3.3.0/24
+cluster_network = 10.3.3.0/24
+EOF
+
+ceph-deploy install --release luminous s4 s5 s6
+ceph-deploy mon create-initial
+
+ceph-deploy admin s4 s5 s6
+
+ceph-deploy osd create s4 --data /dev/sdb
+ceph-deploy osd create s5 --data /dev/sdb
+ceph-deploy osd create s6 --data /dev/sdb
+
+sudo chmod +r /etc/ceph/ceph.client.admin.keyring
+
+ceph-deploy mgr create s4 s5 s6
+ceph health
+```
+
+
+
 ## 一、主机规划
 
 | 主机名称 |      系统      |     IP      |    配置    |
@@ -42,7 +82,6 @@ timedatectl set-timezone Asia/Shanghai
 
 ```bash
 sudo vim /etc/ntp.conf
-
 
 restrict 10.3.3.7 mask 255.255.255.0 nomodify notrap  #配置集群的IP段
 
@@ -99,13 +138,11 @@ sudo chmod 0440 /etc/sudoers.d/cephuser
 
 
 
-### 3、在4台机器上配置ceph 的yum源，安装依赖包
+### 3、使用root用户在4台机器上配置ceph 的yum源，安装依赖包
 
 * yum源
 
-  ```bash
-  sudo vi /etc/yum.repos.d/ceph.repo
-  ```
+  
 
   把如下内容粘帖进去，保存到 /etc/yum.repos.d/ceph.repo 文件中。
 
@@ -124,10 +161,11 @@ sudo chmod 0440 /etc/sudoers.d/cephuser
   gpgcheck = 0
   gkgkey = http://mirrors.tuna.tsinghua.edu.cn/ceph/keys/release.asc
   EOF
-  sudo yum makecache
-  ```
-
   
+  wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+  
+  yum makecache
+  ```
 
   
 
@@ -138,13 +176,15 @@ wget https://files.pythonhosted.org/packages/5f/ad/1fde06877a8d7d5c9b60eff7de2d4
 sudo yum -y install unzip
 unzip distribute-0.7.3.zip
 cd distribute-0.7.3
-sudo python setup.py install
+python setup.py install
+cd
+
 ```
 
 * 安装rpm包：
 
 ```
-sudo yum -y install deltarpm
+yum -y install deltarpm
 ```
 
 
@@ -167,14 +207,14 @@ export CEPH_DEPLOY_GPG_URL=http://mirrors.tuna.tsinghua.edu.cn/ceph/keys/release
 ceph安装过程中依赖部分epel软件源
 
 ```shell
-yum -y install epel-release
+sudo yum -y install epel-release
 # 使用国内epel源
-sed -e 's!^metalink=!#metalink=!g' \
+sudo sed -e 's!^metalink=!#metalink=!g' \
     -e 's!^#baseurl=!baseurl=!g' \
     -e 's!//download\.fedoraproject\.org/pub!//mirrors.tuna.tsinghua.edu.cn!g' \
     -e 's!http://mirrors\.tuna!https://mirrors.tuna!g' \
     -i /etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel-testing.repo
-yum -y install ceph-deploy
+sudo yum -y install ceph-deploy
 ```
 
 
@@ -191,7 +231,7 @@ cd my-cluster
 ### 3.4 创建`ceph`集群，部署新的`monitor`节点
 
 ```bash
-ceph-deploy new s7 s8 s9
+ceph-deploy new s4 s5 s6
 ```
 
 
@@ -201,10 +241,10 @@ ceph-deploy new s7 s8 s9
 增加`public_network`和`cluster_network`配置
 
 ```bash
-vim ceph.conf
-...
-public_network = 10.10.10.0/24
-cluster_network = 10.10.10.0/24
+cat >> ./ceph.conf << EOF
+public_network = 10.3.3.0/24
+cluster_network = 10.3.3.0/24
+EOF
 ```
 
 
@@ -214,7 +254,7 @@ cluster_network = 10.10.10.0/24
 需要指定版本，不指定默认安装最新的版本
 
 ```bash
-ceph-deploy install --release luminous s7 s8 s9
+ceph-deploy install --release luminous s4 s5 s6
 ```
 
 
@@ -239,7 +279,7 @@ ceph-deploy mon create-initial
 ### 3.9 分发key
 
 ```bash
-ceph-deploy admin s7 s8 s9
+ceph-deploy admin s4 s5 s6
 ```
 
 
@@ -247,9 +287,9 @@ ceph-deploy admin s7 s8 s9
 ### 3.10 初始化磁盘
 
 ```bash
-ceph-deploy osd create s7 --data /dev/vdb
-ceph-deploy osd create s8 --data /dev/vdb
-ceph-deploy osd create s9 --data /dev/vdb
+ceph-deploy osd create s4 --data /dev/sdb
+ceph-deploy osd create s5 --data /dev/sdb
+ceph-deploy osd create s6 --data /dev/sdb
 ```
 
 
@@ -271,7 +311,7 @@ ID CLASS WEIGHT  TYPE NAME           STATUS REWEIGHT PRI-AFF
 ### 3.12 给admin key赋权限
 
 ```bash
-chmod +r /etc/ceph/ceph.client.admin.keyring
+sudo chmod +r /etc/ceph/ceph.client.admin.keyring
 ```
 
 
@@ -279,7 +319,7 @@ chmod +r /etc/ceph/ceph.client.admin.keyring
 ### 3.13 创建ceph 管理进程服务
 
 ```bash
-ceph-deploy mgr create s7 s8 s9
+ceph-deploy mgr create s4 s5 s6
 ```
 
 
@@ -307,7 +347,7 @@ successfully created pool rbd
 ### 4.2 创建块设备
 
 ```bash
-rbd create rbd1 --size 1024
+rbd create rbd1 --size 4096
 ```
 
 
@@ -388,7 +428,7 @@ successfully deleted pool rbd
 ### 5.1 创建对象存储网关
 
 ```bash
-1ceph-deploy rgw create s7 s8 s9
+  1ceph-deploy rgw create s7 s8 s9
 ```
 
 
