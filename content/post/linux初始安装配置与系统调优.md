@@ -24,6 +24,7 @@ cat >> /etc/security/limits.conf << EOF
 * hard nofile  1000000
 EOF
 echo "fs.file-max = 2000000" >> /etc/sysctl.conf
+echo "vm.max_map_count=655360" >> /etc/sysctl.conf
 sysctl -p
 echo "ulimit -u 60000" >> /etc/profile
 source /etc/profile
@@ -347,30 +348,27 @@ cat /proc/sys/fs/file-max
 
 ------
 
-**修改最大文件句柄数：永久生效**
+**修改最大文件句柄数和用户最大进程数：永久生效**
 
 **1、修改配置文件加入内核参数/etc/sysctl.conf**
 
 ```
 echo "fs.file-max = 2000000" >> /etc/sysctl.conf
+echo "vm.max_map_count = 655360" >> /etc/sysctl.conf
+sysctl -p
 ```
 
 50W并发可设置 = 999999
 
 注：修改范围为系统所有进程可打开的最大文件句柄
 
-**2、使修改配置立即生效：**
 
-```
-sysctl -p
-```
 
 ## 用户最大进程数
 
-设置各linux 用户的最大进程数，下面把某linux用户的最大进程数设为10000个：
+设置各linux 用户的最大进程数，下面把某linux用户的最大进程数设为60000个：
 
 ```
-echo "ulimit -u 60000" >> /etc/profile
-source /etc/profile
+echo "ulimit -u 10000" >> /etc/profile
 ```
 
