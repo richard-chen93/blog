@@ -26,7 +26,7 @@ EOF
 echo "fs.file-max = 2000000" >> /etc/sysctl.conf
 echo "vm.max_map_count=655360" >> /etc/sysctl.conf
 sysctl -p
-echo "ulimit -u 60000" >> /etc/profile
+echo "ulimit -u 10000" >> /etc/profile
 source /etc/profile
 cd
 
@@ -149,9 +149,9 @@ nofile 是代表最大文件打开数
 ```
 sed  -i 's/#UseDNS yes/UseDNS no/g'  /etc/ssh/sshd_config
 sed  -i 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/g'  /etc/ssh/sshd_config
-sed  -i 's/SELINUX=enforcing/SELINUX=disabled/g'  /etc/ssh/sshd_config
+sed  -i 's/SELINUX=enforcing/SELINUX=disabled/g'  /etc/selinux/config
 setenforce 0
-systemctl diable firewalld
+systemctl disable firewalld
 systemctl stop firewalld
 ```
 
