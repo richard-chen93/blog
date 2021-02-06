@@ -25,7 +25,7 @@ cd /usr/local/prometheus
 ./prometheus --config.file="/usr/local/prometheus/prometheus.yml" &
 ss -tunpl | grep 9090
 ```
-若9090端口被Prometheus程序占用，说明启动成功，浏览器打开http://10.3.3.30:9090
+若9090端口被Prometheus程序占用，说明启动成功，浏览器打开
 http://10.3.3.30:9090/metrics可看到所有监控到的数据
 
 ## 在被监控主机S2上安装node-exporter组件并运行
@@ -42,21 +42,22 @@ http://10.3.3.32:9100/metrics可看到所有收集到的数据
 
 ## 让Prometheus服务器拉取node节点信息
 ```
-vim /usr/local/prometheus/prometheus.yml
+vim /home/admin/promethus/prometheus.yml
   - job_name: 'node01'
     static_configs:
-    - targets: ['10.3.3.32:9100']
+    - targets: ['10.3.3.5:9100']
 ```
 在文件末尾添加节点信息
 
 ## 重启Prometheus服务并查看节点信息
 ```
 pkill prometheus
-./prometheus --config.file="/usr/local/prometheus/prometheus.yml" &
+./prometheus --config.file="/home/admin/prometheus-2.5.0/prometheus.yml" &
 ```
 ## 添加mysql监控
 在s2上安装启动mariadb，为监控系统添加账户mysql_monitor,密码123,授予权限。
 安装使用mysqld_exporter组件,放到/usr/local/mysqld_exporter文件夹下面。
+
 ```
 mysql
 grant select,replication client,process ON *.* to 'mysql_monitor'@'localhost' identified by '123';
@@ -69,18 +70,18 @@ vim ./.my.cnf
 [client]
 user=mysql_monitor
 password=123
-nohup ./mysqld_exporter --config.my-cnf=/usr/local/mysqld_exporter/.my.cnf &
-lsof -i:9104
+nohup ./mysqld_exporter --config.my-cnf=/home/admin/mysqld_exporter-0.12/my.cnf &
+  lsof -i:9104
 ```
 修改Prometheus服务器配置文件，添加mysql监控项。在主配置文件最后再添加下面三行：
 ```
   - job_name: 'nodeS2_mariadb'
     static_configs:
-    - targets: ['10.3.3.32:9104']
+    - targets: ['10.3.3.6:9104']
 ```
 
 ## 安装grafana服务器软件
-在s1上安装：
+在s4上安装：
 ```
 wget https://dl.grafana.com/oss/release/grafana-5.3.4-1.x86_64.rpm
 sudo rpm -i --nodeps grafana-5.3.4-1.x86_64.rpm
@@ -94,8 +95,9 @@ ss -tunpl | grep 3000
 ## 添加grafana图形监控模板：
 ### 下载图形监控模板
 https://github.com/percona/grafana-dashboards
-下载后压缩包里面dashboards文件夹里面的所有jason文件就是图形监控模板文件。
-在grafana中导入特点的jason文件。
+下载后压缩包里面dashboards文件夹里面的所有json文件就是图形监控模板文件。
+在grafana中导入特定的json文件。
+
 ### 设置数据库源
 grafana监控界面里，configuration-data source，之前添加的数据源名称必须改为：Prometheus。然后mysql的监控就可以正常展示
 
@@ -118,7 +120,7 @@ Alertmanager 部署
 alerting:
   alertmanagers:
   - static_configs:
-    - targets: ['10.3.3.31:9093']
+    - targets: ['s4:9093']
 
 rule_files:
   # 告警规则配置文件位置
@@ -126,9 +128,11 @@ rule_files:
 
   - job_name: 'alertmanager'
     static_configs:
-      - targets: ['172.20.32.218:9093']
+      - targets: ['s4:9093']
 
 ./promtool check config prometheus.yml
+
+nohup ./alertmanager &
 ```
 
 
