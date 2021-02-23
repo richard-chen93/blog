@@ -89,10 +89,13 @@ source /etc/profile
 ```
   110  cd kafka/bin/
   106  sh bin/kafka-server-start.sh config/server.properties
-  113  ./kafka-topics.sh --create --zookeeper s102:2181 --partitions 2 --replication-factor 2 --topic topic01
-  117  ./kafka-topics.sh --list --zookeeper s102:2181
-  118  ./kafka-topics.sh --list --zookeeper s103:2181
-  119  ./kafka-topics.sh --list --zookeeper s104:2181
+  113  ./kafka-topics.sh --create --zookeeper s4:2181 --partitions 2 --replication-factor 2 --topic topic01
+  117  ./kafka-topics.sh --list --zookeeper s4:2181
+  118  ./kafka-topics.sh --list --zookeeper s5:2181
+  119  ./kafka-topics.sh --list --zookeeper s6:2181
+  
+#描述topic信息
+  ./kafka-topics.sh --describe --zookeeper s5:2181 --topic topic01
 # 启动 kafka，指定配置文件
 # 创建topic，指定zk服务器，分区数、副本数、topic名字
 ```
@@ -101,10 +104,10 @@ source /etc/profile
 
 ## 6、 生成、消费数据
 
-### s102生产数据：
+### s4生产数据：
 
 ```
-bin/kafka-console-producer.sh --broker-list s102:9092 --topic topic01
+kafka-console-producer.sh --broker-list s4:9092 --topic topic01
 ```
 
 
@@ -113,18 +116,60 @@ bin/kafka-console-producer.sh --broker-list s102:9092 --topic topic01
 
 
 
-### s103或者s102 消费数据：
+### s6或者s5 消费数据：
 
 ```
-bin/kafka-console-consumer.sh --zookeeper s102:2181 --topic topic01 #消费最新数据
+kafka-console-consumer.sh --zookeeper s5:2181 --topic topic01 #消费最新数据
+
+
+```
+
+### 消费者消费消息,指定消费组名
+
+```
+./kafka-console-consumer.sh --bootstrap-server s4:9092,s5:9092,s6:9092 --new-consumer --consumer-property group.id=consumer_group01 --topic topic01
+
+#这里可看到所有消费的消息
+kjh
+iouioy
+khkhjkl
+lllllllllllllllllll
+```
+
+
+
+### 查看正在运行的消费组
+
+```
+./kafka-consumer-groups.sh --bootstrap-server s4:9092 --list --new-consumer
+Note: This will only show information about consumers that use the Java consumer API (non-ZooKeeper-based consumers).
+
+consumer_group01
+```
+
+
+
+### 消费堆积情况查看
+
+```
+./kafka-consumer-groups.sh --bootstrap-server s4:9092 --describe --group consumer_group01
+Note: This will only show information about consumers that use the Java consumer API (non-ZooKeeper-based consumers).
+
+TOPIC                          PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG        CONSUMER-ID                                       HOST                           CLIENT-ID
+topic01                        0          1               1               0          consumer-1-dd3fc747-7a23-4057-a5e3-e6268f2ee802   /10.3.3.5                      consumer-1
+topic01                        1          1               1               0          consumer-1-dd3fc747-7a23-4057-a5e3-e6268f2ee802   /10.3.3.5                      consumer-1
+```
+
+
+
+### 消费所有数据，从头开始
+
+```
+bin/kafka-console-consumer.sh --zookeeper s5:2181 --topic topic01 --from beginning  
 ```
 
 ```
-bin/kafka-console-consumer.sh --zookeeper s102:2181 --topic topic01 --from beginning  #消费所有数据，从头开始
-```
-
-```
-bin/kafka-console-consumer.sh --bootstrap-server s102:9092 --topic topic01 --from-beginning
+bin/kafka-console-consumer.sh --bootstrap-server s5:9092 --topic topic01 --from-beginning
 #offset数据不经过zk，而是通过kafka集群bootstrap-server
 #offset数据保存在kafka集群的topic里
 ```
@@ -132,7 +177,7 @@ bin/kafka-console-consumer.sh --bootstrap-server s102:9092 --topic topic01 --fro
 ### 查看topic信息
 
 ```
-bin/kafka-topics.sh --zookeeper s102:2181 --describe topic topic01
+bin/kafka-topics.sh --zookeeper s5:2181 --describe topic topic01
 ```
 
 ```
@@ -144,6 +189,6 @@ Topic:topic01   PartitionCount:2        ReplicationFactor:2     Configs:
 ### 删除topic
 
 ```
-bin/kafka-topics.sh --zookeeper s102:2181 --delete --topic topic01
+bin/kafka-topics.sh --zookeeper s5:2181 --delete --topic topic01
 ```
 
