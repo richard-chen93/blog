@@ -20,7 +20,7 @@ yum install -y net-tools
 - rm ：表示退出容器时，容器一起删除
 - v ：指定volumes，格式为： 宿主机共享目录：容器目录  ，这样宿主机的/ken目录就被挂载到了容器的/data/目录下了
 -- privileged=true: 使共享的目录可以访问
- 
+
 ## 将容器打包成镜像
 docker commit --change='CMD ["/auto_sshd.sh"]' -c "EXPOSE 22" test-centos1 centos_sshd:7.0
 命令注释： --change : 将后期使用此镜像运行容器时的命令参数、开放的容器端口提前设置好。
@@ -30,3 +30,17 @@ docker save -o centos7_django_mhost_v1.2.tar  centos7_django_mhost_v1.2
 
 ## 解压tar包到image
 docker load -i {image_name}.tar
+
+
+
+## docker查看、停止、删除容器
+
+$ docker ps // 查看所有正在运行容器 
+
+$ docker stop containerId // containerId 是容器的ID 
+
+$ docker ps -a // 查看所有容器 $ docker ps -a -q // 查看所有容器ID 
+
+$ docker stop $(docker ps -a -q) // stop停止所有容器 
+
+$ docker rm $(docker ps -a -q) //  remove删除所有容器
