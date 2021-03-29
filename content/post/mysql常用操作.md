@@ -39,3 +39,39 @@ CREATE TABLE IF NOT EXISTS `runoob_tbl`(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 
+
+
+## 修改root密码
+
+使用自动生成的密码登录mysql以后
+
+修改密码mysql>  alter user 'root'@'localhost' identified by 'you_new_password';
+
+
+
+## 忘记root密码
+
+vim /etc/my.cnf
+
+```
+[mysqld]
+skip-grant-tables  #添加这一行
+```
+
+```
+service mysqld restart
+```
+
+```
+mysql -h 127.0.0.1 -uroot
+use mysql;
+flush privileges;
+alter user 'root'@'localhost' identified by '123456';
+flush privileges;
+quit
+```
+
+```
+# my.cnf配置文件去掉skip-grant-tables 这一行，重启mysql
+```
+
