@@ -14,6 +14,11 @@ ifconfig报错
 yum install -y net-tools
 
 ## 常用参数含义
+
+docker ps -a --no-trunc 查看容器的启动命令。
+
+-td 后台运行。
+
 - it ：互动模式登录容器，并分配一个终端
 - name ：指定容器名称
 - p ：小p指定容器的80端口映射为宿主机的7879端口。

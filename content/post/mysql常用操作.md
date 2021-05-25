@@ -75,3 +75,15 @@ quit
 # my.cnf配置文件去掉skip-grant-tables 这一行，重启mysql
 ```
 
+
+
+## 不能创建用户
+
+mysql> CREATE USER 'bond'@'%' IDENTIFIED BY 'bond_123456';
+ERROR 1819 (HY000): Unknown error 1819
+
+```
+set global validate_password_policy=0;
+select @@validate_password_length;
+```
+
