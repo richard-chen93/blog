@@ -65,8 +65,14 @@ service mysqld restart
 ```
 mysql -h 127.0.0.1 -uroot
 use mysql;
+
+SHOW VARIABLES LIKE 'validate_password%'; 
+set global validate_password_policy=LOW;
+set global validate_password_length=6;
+
 flush privileges;
-alter user 'root'@'localhost' identified by '123456';
+alter user 'root'@'localhost' identified by 'TD@123';
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'TD@123';
 flush privileges;
 quit
 ```

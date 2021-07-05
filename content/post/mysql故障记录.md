@@ -13,11 +13,33 @@ mysql5.7、centos7
 
 ## 报错记录
 
+### 1、启动失败
+
 mysql启动失败，报错  The server quit without updating PID file！
 修改启动脚本 /etc/init.d/mysqld 约278行，增加--user=root参数
  $bindir/mysqld_safe --user=root --datadir="$datadir" --pid-file="$mysqld_pid_file_path"     $other_args >/dev/null &
 
 确保/etc/下有my.cnf.d
+
+### 2、无法安装、初始化
+
+报错内容：
+
+```
+"mysqld: Can't read dir of '/etc/my.cnf.' (Errcode: 2 - No such file or directory)
+```
+
+解决：
+
+确保有 ！includedir 且下面有空行
+
+```
+# include all files from the config directory
+#
+!includedir /etc/my.cnf.d
+
+#
+```
 
 
 
@@ -120,3 +142,12 @@ Slave*IO*Running: YES 表示slave的日志读取线程开启
 Slave*SQL*Running: YES 表示SQL执行线程开启
 
 两者都为YES表示主从模式成功。
+
+
+
+## mysql主从不同步
+
+待解决
+
+
+
