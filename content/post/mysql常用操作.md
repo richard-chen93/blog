@@ -70,8 +70,10 @@ SHOW VARIABLES LIKE 'validate_password%';
 set global validate_password_policy=LOW;
 set global validate_password_length=6;
 
-flush privileges;
+flush privileges;   #此步骤必须
 alter user 'root'@'localhost' identified by 'TD@123';
+
+
 ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'TD@123';
 flush privileges;
 quit
