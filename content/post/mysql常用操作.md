@@ -85,6 +85,28 @@ quit
 
 
 
+
+
+智邦部署，安装cdh时，mysql需要配置validate_password=off;
+
+```
+1、登录mysql
+
+set global validate_password_policy=0;
+
+set global validate_password_length=4;
+
+2、/etc/my.cnf增加配置
+
+validate_password=off;
+
+3、重启mysql
+```
+
+
+
+
+
 ## 不能创建用户
 
 mysql> CREATE USER 'bond'@'%' IDENTIFIED BY 'bond_123456';
