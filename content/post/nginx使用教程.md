@@ -111,3 +111,66 @@ upstream mycluster {
 }
 ```
 
+# 3、域名访问白名单(web服务与反向代理)
+
+目的：仅允许白名单中的ip访问。
+
+在nginx conf目录创建以下两个配置。
+
+### 1、先看web服务
+
+```
+backend.conf
+server {
+    listen 9999;
+    server_name 10.202.12.54;
+
+    location / {
+        root /tmp/test/backend;
+        index /index.html;
+    }
+}
+```
+
+用户访问54的9999的/，将看到backend目录的页面；
+
+### 2、反向代理
+
+
+
+```
+test_com.conf
+upstream back {
+    server 10.202.12.54:9999 max_fails=1 fail_timeout=10 weight=1;
+}
+
+server {
+    listen 9966;
+    server_name 10.202.12.54;		#test.com
+    include         firewall.conf;	#白名单配置文件
+
+    location / {
+        root /tmp/test/frontend;
+        index /index.html;
+    }
+
+    location /back/ {		#back后面必须加/，否则404
+        proxy_pass      http://back;
+    }
+}
+```
+
+用户访问http://test.com:9966 将看到frontend目录的页面；访问http://test.com:9966/back 将看到后端页面。
+
+访问控制通过 include   firewall.conf文件加载。nginx的conf同级目录下创建firewall.conf，添加白名单。
+
+```
+cat firewall.conf
+allow   10.15.30.95;
+allow  10.86.0.0/16;
+deny    all;
+```
+
+将允许95这个ip，及86网段所有ip访问，其他全部拒绝。
+
+firewall.conf的生效反问，看你配置在哪，配置在location下，就仅此location生效。
