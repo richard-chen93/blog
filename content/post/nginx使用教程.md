@@ -49,12 +49,27 @@ nginx
 
 
 
-# 2、搭建反向代理实现负载均衡，使用轮询方法
+# 2、搭建反向代理实现负载均衡
 
 ```
 
-
+#轮询
 upstream mycluster {
+    server 127.0.0.1:8001;
+    server 127.0.0.1:8002;
+    server 127.0.0.1:8003;
+}
+
+#权重
+upstream mycluster {
+    server 127.0.0.1:8001 weight=1;
+    server 127.0.0.1:8002 weight=1;
+    server 127.0.0.1:8003 weight=10;
+}
+
+#ip 哈希
+upstream mycluster {
+    ip_hash;
     server 127.0.0.1:8001;
     server 127.0.0.1:8002;
     server 127.0.0.1:8003;
