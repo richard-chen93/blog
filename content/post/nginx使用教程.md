@@ -11,8 +11,6 @@ draft: false
 
 使用docker准备4台nginx容器，nginx做反向代理，nginx1-3做静态web服务器
 
-
-
 ```
 docker run -itd --net host --name nginx  -p 80:80 \
 -v /data/docker/nginx/conf/vhost:/etc/nginx/conf.d:rw \
@@ -43,16 +41,11 @@ docker run -itd --net host --name nginx-3  -p 8003:8003 \
 -v /home/admin/nginx-3/conf/nginx.conf:/etc/nginx/nginx.conf:rw \
 -v /home/admin/nginx-3/html:/etc/nginx/html:rw \
 nginx
-
-
 ```
-
-
 
 ## 2、搭建反向代理实现负载均衡
 
 ```
-
 #轮询
 upstream mycluster {
     server 127.0.0.1:8001;
@@ -136,8 +129,6 @@ server {
 
 ### 2、反向代理
 
-
-
 ```
 test_com.conf
 upstream back {
@@ -146,15 +137,15 @@ upstream back {
 
 server {
     listen 9966;
-    server_name 10.202.12.54;		#test.com
-    include         firewall.conf;	#白名单配置文件
+    server_name 10.202.12.54;        #test.com
+    include         firewall.conf;    #白名单配置文件
 
     location / {
         root /tmp/test/frontend;
         index /index.html;
     }
 
-    location /back/ {		#back后面必须加/，否则404
+    location /back/ {        #back后面必须加/，否则404
         proxy_pass      http://back;
     }
 }
@@ -174,3 +165,23 @@ deny    all;
 将允许95这个ip，及86网段所有ip访问，其他全部拒绝。
 
 firewall.conf的生效反问，看你配置在哪，配置在location下，就仅此location生效。
+
+## 4、nginx静态web
+
+```
+加入密码认证
+sudo yum -y install httpd-tools
+sudo htpasswd -c /usr/local/src/nginx/apps apps #apps用户，密码文件名apps
+cat /usr/local/src/nginx/apps
+
+server {
+    listen 80;
+    server_name  localhost;
+    .......
+    #新增下面两行
+    auth_basic "Please input password"; #这里是验证时的提示信息
+    auth_basic_user_file /usr/local/src/nginx/apps;
+    location /{
+    .......
+}
+```
