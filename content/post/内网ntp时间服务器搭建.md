@@ -80,3 +80,62 @@ ntpd 不仅仅是时间同步服务器，他还可以做客户端与标准时间
 因而，唯一一个可以令时间发生跳变的点，是计算机刚刚启动，但还没有启动很多服务的那个时候。其余的时候，理想的做法是使用ntpd来校准时钟，而不是调整计算机时钟上的时间。
 
 NTPD 在和时间服务器的同步过程中，会把 BIOS 计时器的振荡频率偏差——或者说 Local Clock 的自然漂移(drift)——记录下来。这样即使网络有问题，本机仍然能维持一个相当精确的走时
+
+### 企业内网ntp服务
+
+systemctl enable ntpd
+
+systemctl start ntpd
+
+ntpstat
+
+ntpq -p
+
+如果显示不同步。等5分钟再看看
+
+#### ntpserver :
+
+sudo yum -y install ntp ntpdate
+
+sudo vim /etc/ntp.conf
+
+driftfile /var/lib/ntp/drift
+restrict default nomodify notrap nopeer noquery
+restrict 127.0.0.1 
+restrict ::1
+server 1.cn.pool.ntp.org iburst
+server ntp3.aliyun.com iburst
+includefile /etc/ntp/crypto/pw
+keys /etc/ntp/keys
+disable monitor
+
+#### ntpclinet:
+
+driftfile /var/lib/ntp/drift
+
+默认拒绝客户端所有操作
+
+restrict default kod notrap nomodify nopeer noquery
+
+禁止本身的server
+
+server cn.ntp.org.cn prefer
+
+server edu.ntp.org.cn iburst
+
+#放行时间服务器16.128
+restrict 10.202.16.128
+restrict 127.0.0.1
+restrict ::1
+
+server 10.202.16.128
+
+server    127.127.1.0
+
+fudge     127.127.1.0 stratum 10
+
+includefile /etc/ntp/crypto/pw
+keys /etc/ntp/keys
+disable monitor
+
+## 
