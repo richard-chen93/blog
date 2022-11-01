@@ -41,15 +41,11 @@ mysql启动失败，报错  The server quit without updating PID file！
 #
 ```
 
-
-
 ## 修改root密码
 
 使用自动生成的密码登录mysql以后
 
 修改密码mysql>  alter user 'root'@'localhost' identified by 'you_new_password';
-
-
 
 ## mysql主从同步集群搭建
 
@@ -70,8 +66,6 @@ log-bin=master-bin
 
 log-bin= relay-bin
 ```
-
-
 
 ### 2、A执行：
 
@@ -95,9 +89,7 @@ mysql> flush privileges; #刷新配置
 service mysqld restart; # 重启mysql
 ```
 
-
-
-###  3、B执行：
+### 3、B执行：
 
 ```
 mysql -h 127.0.0.1 -u root -p #登录mysql
@@ -125,9 +117,7 @@ Query OK, 0 rows affected, 2 warnings (0.00 sec)
 mysql>  start slave; # 开启复制
 ```
 
-
-
-### 4、 验证，查看状态 
+### 4、 验证，查看状态
 
 重新登录mysql slave机器，查看其状态：
 
@@ -143,11 +133,22 @@ Slave*SQL*Running: YES 表示SQL执行线程开启
 
 两者都为YES表示主从模式成功。
 
-
-
 ## mysql主从不同步
 
 待解决
 
+不能创建用户
 
+mysql> CREATE USER 'bond'@'%' IDENTIFIED BY 'bond_123456';
+ERROR 1819 (HY000): Unknown error 1819
 
+```
+set global validate_password_policy=0;
+select @@validate_password_length;
+```
+
+rm: cannot remove '/var/lock/subsys/mysql': Permission denied
+
+rm -rf 删除它
+
+sudo chown -R apps.apps /var/lock/subsys/

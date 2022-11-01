@@ -7,13 +7,9 @@ date: 2022-09-02T17:36:24+08:00
 draft: false
 ---
 
-
-
 原文地址：
 
 [在 CentOS/RHEL 7 中配置 NFS 服务器和客户端-之路教程](https://www.onitroad.com/jc/linux/centos/service/nfs/how-to-configure-nfs-server-and-client-in-centos-rhel-7.html)
-
-
 
 在 CentOS/RHEL 7 中配置 NFS 服务器和客户端
 
@@ -69,8 +65,8 @@ nfs-utils 已经安装在我们的系统上。
 
 现在通过 NFS 将此目录导出/共享到特定客户端。
 
-| 1<br><br>2 | `[root@nfsserver ~]``# echo '/nfsshare nfsclient.onitroad.com(rw,sync)' >> /etc/exports`<br><br>`[root@nfsserver ~]``# exportfs -r` |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 1<br><br>2 | `[root@nfsserver ~]``# echo '/data/nfsdata TLVM202016003(rw,sync)' >> /etc/exports`<br><br>`[root@nfsserver ~]``# exportfs -r` |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------ |
 
 启用并启动 nfs-server 服务。
 
@@ -118,3 +114,20 @@ NFS 服务器已配置。
 | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
 我们已在 CentOS/RHEL 7 上成功配置 NFS 服务器和客户端，并在该客户端上持久挂载 NFS 共享。
+
+# windows客户端挂载nfs磁盘
+
+# 如何在 windows server 2008 上面 挂载NFS
+
+发布于2020-12-30 16:37:31阅读 8590
+
+首先， 你在一台[服务器](https://cloud.tencent.com/product/cvm?from=10680)上面配置好NFS 服务器：然后按照一下步骤：
+
+**mounting the nfs on windows server 2008 r2:**
+
+- open Windows Server 的Dos window（not powershell），typing： **servermanagercmd.exe -install FS-NFS-Services**
+- to ensure that the disk map still exists after the system is restarted：
+   **net use /persistent:yes**
+- mount the nfs on z:
+
+**mount IP:/Share -o nolock,rsize=1024,wsize=1024,timeo=15 z:**

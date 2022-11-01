@@ -166,6 +166,52 @@ deny    all;
 
 firewall.conf的生效反问，看你配置在哪，配置在location下，就仅此location生效。
 
+反向代理使用方法：
+
+upstream dwapi-vue {
+    server 10.202.12.97:8001 weight=10;
+}
+
+upstream dwapi-api {
+    server 10.202.12.97:8781 weight=10;
+}
+
+upstream dwapi-apiconf {
+    server 10.202.12.97:8086 weight=10;
+}
+
+server {
+
+     listen 80;
+     server_name dwapi.ztoky56.com;
+     index index.html index.php;
+    
+     location  /apiconf/ {
+         rewrite_log on;
+         rewrite ^/apiconf/api-service-config-api/(.*) /api-service-config-api/$1 break;
+         proxy_pass http://dwapi-apiconf;
+         include    proxy.conf;
+     }
+    
+    
+     location /api/ {
+         rewrite ^/api/(.*) /$1 break;
+         proxy_pass http://dwapi-api;
+         include    proxy.conf;
+
+}
+
+     location / {
+         proxy_pass http://dwapi-vue;
+         include    proxy.conf;
+         if ( $uri ~* .*\.(js|css|gif|jpg|jpeg|png|bmp|swf|flv|ico)$ ) {
+             expires 302400s;
+         }
+     }
+     access_log /apps/logs/tengine/dwapi.access.log main;
+
+}
+
 ## 4、nginx静态web
 
 ```
@@ -185,3 +231,31 @@ server {
     .......
 }
 ```
+
+## 5、代理tcp如mysql
+
+编译加载stream模块。
+
+配置文件示例
+
+    worker_connections  65535;
+
+}
+
+###########
+stream {
+
+    upstream mysql{
+        server 10.15.30.54:3306;
+    }
+    
+    server {
+        listen 13306;
+        proxy_pass mysql;
+    }
+
+}
+
+###########
+
+http {
