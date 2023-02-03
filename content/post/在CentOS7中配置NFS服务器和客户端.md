@@ -131,3 +131,7 @@ NFS 服务器已配置。
 - mount the nfs on z:
 
 **mount IP:/Share -o nolock,rsize=1024,wsize=1024,timeo=15 z:**
+
+# macos挂载
+
+服务器需要加上  /data/nfsdata *(rw,sync,insecure)

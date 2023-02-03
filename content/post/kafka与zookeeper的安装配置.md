@@ -8,6 +8,7 @@ draft: false
 ---
 
 ## 1、kafka架构图及下载
+
 https://archive.apache.org/dist/kafka/0.11.0.0/kafka_2.11-0.11.0.0.tgz
 
 ![](https://i.bmp.ovh/imgs/2020/12/799f1bc647c4608b.png)
@@ -15,6 +16,7 @@ https://archive.apache.org/dist/kafka/0.11.0.0/kafka_2.11-0.11.0.0.tgz
 此外，java安装并配置好环境变量。
 
 ## 2、修改kafka配置文件
+
 ```
 vim ./config/server.properties
 broker.id=0 #每个broker的唯一标识，不可重复
@@ -33,6 +35,7 @@ xync 分发同步 kafka和zk目录 （会经常用到同步工具xsync）
 或使用mobaxterm的multi-exec功能同时修改多台机器的配置。
 
 ## 4、zookeeper的分布式安装配置
+
 #### 4.1安装
 
 kafka依赖于zookeeper，先下载安装好zookeeper。（三台机器都要安装配置，可以使用同步脚本xsync，或者mobaxterm的的multi-execution功能）
@@ -42,8 +45,8 @@ kafka依赖于zookeeper，先下载安装好zookeeper。（三台机器都要安
 mv zoo_sample.cfg zoo.cfg
 vim zoo.cfg
 dataDir=/tmp/zookeeper #修改默认路径，指定路径为/root/zookeeper/zkData
-
 ```
+
 #### 4.2修改配置文件
 
 在zkData目录下创建myid文件，myid文件内容（整型数字：1，2，3）对应三个集群节点的编号。
@@ -54,6 +57,7 @@ server.1=s4:2888:3888
 server.2=s5:2888:3888
 server.3=s6:2888:3888
 ```
+
 数字123对应myid文件的内容，指定了节点的编号。
 s4,s5,s6是主机名或IP；2888是follower与leader服务器通讯传递副本（replicator）的端口；3888是leader挂掉后集群重新选举时通信的端口。
 
@@ -68,7 +72,6 @@ $ sudo su #切换到root用户
 $ vim /etc/rc.d/rc.local
 新增配置
 su admin -c "/usr/local/zookeeper/startBase.sh"  #组件脚本全路径
-
 ```
 
 startBase.sh脚本内容：
@@ -93,14 +96,12 @@ source /etc/profile
     117  ./kafka-topics.sh --list --zookeeper s4:2181
   118  ./kafka-topics.sh --list --zookeeper s5:2181
   119  ./kafka-topics.sh --list --zookeeper s6:2181
-  
+
 #描述topic信息
   ./kafka-topics.sh --describe --zookeeper s5:2181 --topic topic01
 # 启动 kafka，指定配置文件
 # 创建topic，指定zk服务器，分区数、副本数、topic名字
 ```
-
-
 
 ## 6、 生成、消费数据
 
@@ -110,18 +111,13 @@ source /etc/profile
 kafka-console-producer.sh --broker-list s4:9092 --topic topic01
 ```
 
-
->hi there
->i am richard
-
-
+> hi there
+> i am richard
 
 ### s6或者s5 消费数据：
 
 ```
 kafka-console-consumer.sh --zookeeper s5:2181 --topic topic01 #消费最新数据
-
-
 ```
 
 ### 消费者消费消息,指定消费组名
@@ -136,8 +132,6 @@ khkhjkl
 lllllllllllllllllll
 ```
 
-
-
 ### 查看正在运行的消费组
 
 ```
@@ -146,8 +140,6 @@ Note: This will only show information about consumers that use the Java consumer
 
 consumer_group01
 ```
-
-
 
 ### 消费堆积情况查看
 
@@ -159,8 +151,6 @@ TOPIC                          PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG   
 topic01                        0          1               1               0          consumer-1-dd3fc747-7a23-4057-a5e3-e6268f2ee802   /10.3.3.5                      consumer-1
 topic01                        1          1               1               0          consumer-1-dd3fc747-7a23-4057-a5e3-e6268f2ee802   /10.3.3.5                      consumer-1
 ```
-
-
 
 ### 消费所有数据，从头开始
 
@@ -191,4 +181,3 @@ Topic:topic01   PartitionCount:2        ReplicationFactor:2     Configs:
 ```
 bin/kafka-topics.sh --zookeeper s5:2181 --delete --topic topic01
 ```
-

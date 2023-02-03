@@ -212,7 +212,7 @@ server {
 
 }
 
-## 4、nginx静态web
+## 4、nginx静态web 加入密码认证
 
 ```
 加入密码认证

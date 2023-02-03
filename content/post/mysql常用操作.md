@@ -130,3 +130,29 @@ sudo chown -R apps.apps /var/lock/subsys/
 /usr/local/mysql/bin/mysqldump -E -ndt zto_qykf -u root -p > shijian.sql
 
 导入 source .sql;w
+
+
+
+监控
+
+mysql exporter
+
+
+
+CREATE USER 'exporter'@'%' IDENTIFIED BY 'ztky@123';
+
+GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'exporter'@'%';
+
+
+
+vim .my.cnf
+
+[client]
+user=exporter
+password=ztky@123
+
+
+
+
+
+nohup ./mysqld_exporter --web.listen-address=:9306 --config.my-cnf=/apps/svr/mysqld_exporter/.my.cnf > /apps/logs/mysqld_exporter/exporter.log 2>&1 &
